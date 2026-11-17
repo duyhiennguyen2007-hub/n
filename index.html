@@ -1,0 +1,778 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title> Từ Vựng</title>
+  <link rel="stylesheet" href="mai.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div>
+        <h1> Từ Vựng</h1>
+        <link
+  rel="icon"
+  type="image/svg+xml"
+  href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232563eb'/><text x='50' y='67' font-size='58' text-anchor='middle'>📘</text></svg>"
+/>
+        <p>Giải trí, luyện nhớ và kiểm tra vốn từ tiếng Anh của bạn.</p>
+      </div>
+      <div class="header-actions">
+       <div class="firebase-account">
+  <button
+    id="firebaseLoginBtn"
+    class="mode-btn firebase-login-btn"
+    type="button"
+    aria-pressed="false"
+  >
+    🔐 Đăng nhập Google
+  </button>
+
+  <div
+    id="firebaseUserStatus"
+    class="firebase-user-status signed-out"
+    title="Trạng thái tài khoản"
+  >
+    <span class="firebase-status-dot"></span>
+
+    <span id="firebaseUserStatusText">
+      Chưa đăng nhập
+    </span>
+  </div>
+</div>
+
+  <!-- Khu vực điểm danh học tập -->
+  <div id="studyDaysWrapper" class="study-days-wrapper">
+    <button
+      id="studyDaysBtn"
+      class="mode-btn study-days-btn"
+      type="button"
+      aria-expanded="false"
+      title="Xem số ngày đã học"
+    >
+      🔥 <span id="studyDaysCount">0</span> ngày
+    </button>
+
+    <div
+      id="studyDaysPanel"
+      class="study-days-panel hidden"
+    >
+      <div class="study-days-heading">
+        Điểm danh học tập
+      </div>
+
+      <div class="study-days-total">
+        Bạn đã học
+        <strong>
+          <span id="studyDaysPanelCount">0</span> ngày
+        </strong>
+      </div>
+
+      <div
+        id="studyAttendanceStatus"
+        class="study-attendance-status"
+      >
+        Hôm nay bạn chưa điểm danh.
+      </div>
+
+      <button
+        id="studyAttendanceBtn"
+        class="primary-btn study-attendance-btn"
+        type="button"
+      >
+        Điểm danh hôm nay
+      </button>
+    </div>
+  </div>
+   <button id="learnModeBtn" class="mode-btn active">
+    Flashcard
+  </button>
+  <button id="quizModeBtn" class="mode-btn">
+    Quiz
+  </button>
+  <button id="practiceModeBtn" class="mode-btn">
+  Bài tập
+</button>
+  <button id="lessonModeBtn" class="mode-btn" type="button">
+  Bài học
+</button>
+        <button id="darkModeToggle" class="theme-btn" title="Chế độ tối">🌙</button>
+        <button id="deviceToggleBtn" class="theme-btn" title="Chọn thiết bị">📱💻</button>
+
+<!-- Chọn giọng phát âm -->
+<label class="speech-accent-control">
+
+  <span></span>
+
+  <select
+    id="speechAccentSelect"
+    title="Chọn giọng phát âm tiếng Anh"
+    aria-label="Chọn giọng phát âm"
+  >
+    <option value="en-US">🇺🇸 Anh-Mỹ</option>
+    <option value="en-GB">🇬🇧 Anh-Anh</option>
+  </select>
+
+</label>
+
+      </div>
+    </header>
+
+    <main class="main-grid">
+      <section class="panel panel-main">
+        <div class="panel-top">
+          <div>
+            <label for="categorySelectToggle">Loại từ:</label>
+            <button id="categorySelectToggle" class="select-toggle" type="button" aria-expanded="false">
+              <span id="categorySelectSummary">Tất cả</span>
+              <span class="select-arrow">▾</span>
+            </button>
+            <div id="categorySelectPanel" class="tag-select-panel hidden"></div>
+          </div>
+          <div>
+            <label for="tagSelect">Tag:</label> 
+            <button id="tagSelectToggle" class="select-toggle" type="button" aria-expanded="false">
+              <span id="tagSelectSummary">Tất cả</span>
+              <span class="select-arrow">▾</span>
+            </button>
+            <div id="tagSelectPanel" class="tag-select-panel hidden"></div>
+          </div>
+          <div>
+            <label for="reviewModeSelect">Ôn tập:</label>
+            <select id="reviewModeSelect">
+              <option value="all">Tất cả</option>
+              <option value="due">Đến hạn</option>
+              <option value="incorrect">Từ sai</option>
+              <option value="starred">Từ sao</option>
+              <option value="new">Từ mới</option>
+            </select>
+          </div>
+          <div>
+            <label for="quizTypeSelect">Loại bài:</label>
+            <select id="quizTypeSelect">
+              <option value="multiple">Trắc nghiệm</option>
+              <option value="typing">Gõ đáp án</option>
+              <option value="match">Nối từ</option>
+              <option value="listen">Nghe và viết</option>
+            </select>
+          </div>
+          <div>
+            <label for="directionSelect">Hướng học:</label>
+            <select id="directionSelect">
+  <option value="enToVn">EN → VN</option>
+  <option value="vnToEn">VN → EN</option>
+
+  <option
+    id="exampleDirectionOption"
+    value="example"
+  >
+    Example
+  </option>
+</select>
+          </div>
+          <div>
+  <label for="quizCountSelect">Số câu:</label>
+
+  <input
+    id="quizCountSelect"
+    type="number"
+    list="quizCountOptions"
+    value="10"
+    min="1"
+    step="1"
+    placeholder="Nhập số câu"
+  />
+
+  <datalist id="quizCountOptions">
+    <option value="5"></option>
+    <option value="10"></option>
+    <option value="15"></option>
+    <option value="20"></option>
+  </datalist>
+</div>
+<div>
+  <label for="speechRateSelect">Tốc độ nói:</label>
+
+  <select id="speechRateSelect">
+    <option value="0.5">0.5x</option>
+    <option value="0.6">0.6x</option>
+    <option value="0.75">0.75x</option>
+    <option value="0.9" selected>0.9x</option>
+    <option value="1">1.0x</option>
+    <option value="1.25">1.25x</option>
+    <option value="1.5">1.5x</option>
+    <option value="1.75">1.75x</option>
+    <option value="2">2.0x</option>
+  </select>
+</div>
+        </div>
+
+        <div id="learnPanel" class="card-panel">
+          <div class="card-preview">
+            <div class="card-category" id="flashCategory">Loại từ: -</div>
+            <div class="card-text" id="flashFront">...</div>
+            <div class="card-subtext" id="flashBack"></div>            <div class="card-tags" id="flashTags"></div>          </div>
+          <div class="card-controls">
+            <button id="flipBtn" class="primary-btn">Lật thẻ</button>
+            <button id="flashSpeakBtn" class="secondary-btn">Nghe</button>
+            <button id="prevBtn" class="secondary-btn">Trước</button>
+            <button id="nextBtn" class="secondary-btn">Sau</button>
+          </div>
+        </div>
+
+       <div id="quizPanel" class="card-panel hidden">
+  <div class="question-header">
+    <div id="questionNumber">Câu 1/10</div>
+    <div id="scoreDisplay">Điểm: 0</div>
+  </div>
+
+  <div id="quizQuestionCard" class="question-card">
+    <div id="questionText" class="question-text">
+      Chọn đáp án đúng
+    </div>
+
+    <div id="answersContainer" class="answers"></div>
+
+    <div id="typingContainer" class="typing-container hidden">
+      <input
+        id="typingInput"
+        type="text"
+        placeholder="Nhập đáp án"
+      />
+
+      <button id="submitTyping" class="primary-btn">
+        Nộp
+      </button>
+    </div>
+
+    <div id="matchContainer" class="match-container hidden">
+      <div class="match-columns">
+        <div class="match-col">
+          <div class="match-title">Tiếng Anh</div>
+
+          <div
+            id="matchEnglishColumn"
+            class="match-column"
+          ></div>
+        </div>
+
+        <div class="match-col">
+          <div class="match-title">Tiếng Việt</div>
+
+          <div
+            id="matchVietnameseColumn"
+            class="match-column"
+          ></div>
+        </div>
+      </div>
+
+      <div
+        id="matchMessage"
+        class="match-message"
+      ></div>
+    </div>
+
+    <div id="listenContainer" class="typing-container hidden">
+      <button id="listenButton" class="secondary-btn">
+        Nghe từ
+      </button>
+
+      <input
+        id="listenInput"
+        type="text"
+        placeholder="Viết chính xác từ tiếng Anh"
+      />
+
+      <button id="submitListen" class="primary-btn">
+        Nộp
+      </button>
+    </div>
+  </div>
+
+  <div id="quizResultPanel" class="quiz-result-panel hidden">
+    <div class="quiz-result-heading">
+      <h2>📋 Kết quả Quiz</h2>
+
+      <div id="quizResultSummary"></div>
+    </div>
+
+    <div
+      id="quizWrongList"
+      class="quiz-wrong-list"
+    ></div>
+  </div>
+
+  <div id="quizActions" class="quiz-actions">
+    <button id="nextQuizBtn" class="secondary-btn">
+      Câu tiếp
+    </button>
+
+    <button id="restartBtn" class="danger-btn">
+      Làm lại
+    </button>
+  </div>
+</div>
+   <div id="practicePanel" class="practice-panel hidden">
+
+  <div class="practice-editor-section">
+    <div class="practice-editor-header">
+      <div>
+        <h2>🧩 Bài tập tương tác</h2>
+        <p>Dán mã bài tập vào bên dưới rồi nhấn “Chạy bài”.</p>
+      </div>
+    </div>
+
+    <textarea
+      id="practiceCodeInput"
+      class="practice-code-input"
+      spellcheck="false"
+      placeholder='Dán mã bài tập JSON vào đây...'
+    ></textarea>
+
+    <div class="practice-editor-actions">
+      <button
+        id="runPracticeBtn"
+        class="primary-btn"
+        type="button"
+      >
+        ▶ Chạy bài
+      </button>
+
+      <button
+        id="clearPracticeCodeBtn"
+        class="secondary-btn"
+        type="button"
+      >
+        Xóa mã
+      </button>
+    </div>
+
+    <div
+      id="practiceCodeError"
+      class="practice-code-error hidden"
+    ></div>
+  </div>
+
+
+  <div
+    id="practiceWorkspace"
+    class="practice-workspace hidden"
+  >
+
+    <div class="practice-lesson-header">
+
+      <div>
+        <h2 id="practiceTitle">
+          Bài tập
+        </h2>
+
+        <div
+          id="practiceInstructions"
+          class="practice-instructions"
+        ></div>
+      </div>
+
+      <div
+        id="practiceScore"
+        class="practice-score"
+      >
+        0 / 0
+      </div>
+
+    </div>
+
+
+    <div
+      id="practicePassage"
+      class="practice-passage hidden"
+    ></div>
+
+
+    <div
+      id="practiceQuestions"
+      class="practice-questions"
+    ></div>
+
+
+    <div class="practice-bottom-actions">
+
+      <button
+        id="checkAllPracticeBtn"
+        class="primary-btn"
+        type="button"
+      >
+        Kiểm tra tất cả
+      </button>
+
+      <button
+        id="resetPracticeBtn"
+        class="secondary-btn"
+        type="button"
+      >
+        Làm lại
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- =====================================
+     KHU VỰC BÀI HỌC
+     ===================================== -->
+
+<div id="lessonPanel" class="lesson-panel hidden">
+
+  <div class="lesson-panel-heading">
+    <div>
+      <h2>📚 Bài học theo chủ đề</h2>
+      <p>Chọn một thẻ tag để xem các từ vựng.</p>
+    </div>
+
+    <span id="lessonWordCount" class="lesson-word-count">
+      0 từ
+    </span>
+  </div>
+
+  <div class="lesson-layout">
+
+    <!-- KHU VỰC HIỂN THỊ TỪ VỰNG -->
+    <section class="lesson-word-area">
+
+      <div
+        id="lessonWordList"
+        class="lesson-word-list"
+      >
+        <div class="lesson-empty">
+          Chọn một thẻ tag bên phải để bắt đầu học.
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- KHU VỰC TAG BÊN PHẢI -->
+    <aside class="lesson-tags-panel">
+
+      <h3>Thẻ tag</h3>
+
+      <input
+        id="lessonTagSearch"
+        class="lesson-tag-search"
+        type="search"
+        placeholder="Tìm kiếm thẻ tag..."
+        autocomplete="off"
+      />
+
+      <div
+        id="lessonTagList"
+        class="lesson-tag-list"
+      ></div>
+
+    </aside>
+
+  </div>
+
+</div>
+
+      </section> 
+
+      <aside class="panel panel-sidebar">
+        <div class="panel-block">
+          <h2>Thêm từ mới</h2>
+          <input id="newWordEng" type="text" placeholder="Từ tiếng Anh" />
+         <div class="tag-input-wrapper">
+  <div id="meaningsDisplay" class="tags-display"></div>
+
+  <input
+    id="newWordVn"
+    type="text"
+    placeholder="Gõ một nghĩa tiếng Việt và nhấn Enter"
+    autocomplete="off"
+  />
+</div>
+          <div class="tag-input-wrapper">
+  <div
+    id="categoriesDisplay"
+    class="tags-display"
+  ></div>
+
+  <div class="field-dropdown">
+    <input
+      id="newWordCategory"
+      type="text"
+      placeholder="Gõ loại từ và nhấn Enter"
+      autocomplete="off"
+    />
+
+    <div
+      id="newWordCategoryPanel"
+      class="field-dropdown-panel hidden"
+    ></div>
+  </div>
+</div>
+          <div class="tag-input-wrapper">
+            <div id="tagsDisplay" class="tags-display"></div>
+            <div class="field-dropdown">
+              <div class="tag-input-row">
+                <input id="newWordTagsInput" type="text" placeholder="Gõ tag và nhấn Enter" autocomplete="off" />
+              </div>
+              <div id="newWordTagsPanel" class="field-dropdown-panel hidden"></div>
+            </div>
+          </div>
+          <div class="tag-input-wrapper">
+            <div id="examplesDisplay" class="tags-display"></div>
+            <div class="field-dropdown">
+              <div class="tag-input-row">
+                <input id="newWordExamplesInput" type="text" placeholder="Gõ ví dụ và nhấn Enter" autocomplete="off" />
+              </div>
+              <div id="newWordExamplesPanel" class="field-dropdown-panel field-dropdown-panel--no-scroll hidden"></div>
+            </div>
+          </div>
+          <button id="addWordBtn" class="primary-btn">Thêm từ</button>
+          <div class="search-wrapper">
+  <input
+    id="searchInput"
+    class="search-input"
+    type="text"
+    placeholder="Tìm từ tiếng Anh hoặc tiếng Việt"
+  />
+
+  <button
+    id="clearSearchBtn"
+    class="clear-search-btn"
+    type="button"
+    title="Xóa nội dung tìm kiếm"
+    aria-label="Xóa nội dung tìm kiếm"
+  >
+    ×
+  </button>
+</div>
+<div id="vocabList" class="vocab-list"></div>
+</div>
+<div class="panel-block">
+  <h2>Quản lý dữ liệu</h2>
+  <div class="data-actions">
+            <button id="exportBtn" class="secondary-btn">Xuất dữ liệu</button>
+            <button id="importBtn" class="secondary-btn">Nhập dữ liệu</button>
+            <input id="importFileInput" type="file" accept="application/json" class="hidden" />
+          </div>
+        </div>
+        <div class="panel-block">
+          <h2>Thống kê</h2>
+          <div id="statsSummary" class="stats-summary"></div>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Modal chỉnh sửa từ -->
+    <div id="editModal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Chi tiết từ vựng</h2>
+          <button id="closeEditModal" class="close-btn">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Tiếng Anh:</label>
+            <input id="editWordEng" type="text" />
+          </div>
+          <div class="form-group">
+            <label>Tiếng Việt:</label>
+            <div class="tag-input-wrapper">
+  <div id="editMeaningsDisplay" class="tags-display"></div>
+
+  <input
+    id="editWordVn"
+    type="text"
+    placeholder="Gõ một nghĩa rồi nhấn Enter"
+    autocomplete="off"
+  />
+</div>
+          </div>
+          <div class="form-group">
+            <label>Loại từ:</label>
+            <div class="field-dropdown">
+    <input
+        id="editWordCategory"
+        type="text"
+        placeholder="Chọn hoặc nhập loại từ"
+        autocomplete="off"
+    >
+
+    <div
+        id="editWordCategoryPanel"
+        class="field-dropdown-panel hidden"
+    ></div>
+</div>
+          </div>
+         <div class="form-group">
+  <label>Tags:</label>
+
+  <div class="tag-input-wrapper">
+    <div id="editTagsDisplay" class="tags-display"></div>
+
+    <div class="field-dropdown">
+      <div class="tag-input-row">
+        <input
+          id="editWordTagsInput"
+          type="text"
+          placeholder="Gõ tag và nhấn Enter"
+          autocomplete="off"
+        />
+      </div>
+
+      <div
+        id="editWordTagsPanel"
+        class="field-dropdown-panel hidden"
+      ></div>
+    </div>
+  </div>
+</div>
+          <div class="form-group">
+  <label for="editWordExamplesInput">Ví dụ</label>
+
+  <div class="tag-input-wrapper">
+    <div
+      id="editExamplesDisplay"
+      class="tags-display"
+    ></div>
+
+    <input
+      id="editWordExamplesInput"
+      type="text"
+      placeholder="Nhập một câu ví dụ rồi nhấn Enter"
+      autocomplete="off"
+    />
+  </div>
+</div>
+          <div class="form-group">
+  <label>Thống kê:</label>
+
+  <div
+    id="editWordStats"
+    class="stats-display"
+  >
+    Đúng: 0 | Sai: 0
+  </div>
+</div>
+
+</div>
+
+<div class="modal-footer">
+          <button id="saveEditWord" class="primary-btn">Lưu thay đổi</button>
+          <button id="cancelEditWord" class="secondary-btn">Hủy</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Modal chọn thiết bị -->
+    <div id="deviceModal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Chọn thiết bị</h2>
+          <button id="closeDeviceModal" class="close-btn">×</button>
+        </div>
+        <div class="modal-body">
+          <p>Bạn đang sử dụng thiết bị nào để truy cập trang web? (Chọn để điều chỉnh giao diện)</p>
+          <div class="device-choice-row">
+            <button id="deviceMobileBtn" class="primary-btn">Điện thoại</button>
+            <button id="deviceDesktopBtn" class="secondary-btn">Máy tính</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal lựa chọn xóa thống kê -->
+<div
+  id="resetStatsModal"
+  class="modal hidden"
+>
+  <div
+    class="modal-content reset-stats-modal-content"
+  >
+    <div class="modal-header">
+      <h2>Xóa thống kê sai</h2>
+
+      <button
+        id="closeResetStatsModal"
+        class="close-btn"
+        type="button"
+        aria-label="Đóng"
+      >
+        ×
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <p class="reset-stats-description">
+        Chọn loại thống kê bạn muốn xóa.
+        Dữ liệu chỉ bị xóa sau khi bạn nhấn
+        “Đồng ý xóa”.
+      </p>
+
+      <label class="reset-stats-option">
+        <input
+          id="resetWordStatsCheckbox"
+          type="checkbox"
+        />
+
+        <span>
+          <strong>Xóa thống kê từ vựng</strong>
+
+          <small id="resetWordStatsCount">
+            0 từ đang sai
+          </small>
+        </span>
+      </label>
+
+      <label class="reset-stats-option">
+        <input
+          id="resetExampleStatsCheckbox"
+          type="checkbox"
+        />
+
+        <span>
+          <strong>Xóa thống kê Example</strong>
+
+          <small id="resetExampleStatsCount">
+            0 Example đang sai
+          </small>
+        </span>
+      </label>
+
+      <div
+        id="resetStatsWarning"
+        class="reset-stats-warning"
+      >
+        Hãy chọn ít nhất một loại thống kê.
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button
+        id="cancelResetStatsBtn"
+        class="secondary-btn"
+        type="button"
+      >
+        Hủy
+      </button>
+
+      <button
+        id="confirmResetStatsBtn"
+        class="danger-btn"
+        type="button"
+        disabled
+      >
+        Đồng ý xóa
+      </button>
+    </div>
+  </div>
+</div>
+  <div id="notification" class="notification hidden"></div>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>
